@@ -20,9 +20,10 @@ final class ReservationProcess implements Process
     {
         /** @var ReservationState $state */
         if ($state === null) {
-            $state = new ReservationState();
+            $state = new ReservationState($event->getProcessId());
         }
 
+        // TODO: add try-catches, check state before handling the $event
         switch (true) {
             case $event instanceof ReservationRequested:
                 $state->userId = $event->getUserId();
@@ -32,14 +33,16 @@ final class ReservationProcess implements Process
                 return new ProcessResult($state, [
                     new LockRoom($event->getRoomId(), $event->getReservationPeriod())
                 ]);
+
             case $event instanceof RoomLocked:
                 $state->roomLockId = $event->getRoomLockId();
 
                 return new ProcessResult($state, [
                     new BookRoom($event->getRoomLockId(), $state->userId)
                 ]);
+
             default:
-                throw new LogicException('Unknown event ' . get_class($event));
+                throw new LogicException('Unsupported event ' . get_class($event));
         }
     }
 

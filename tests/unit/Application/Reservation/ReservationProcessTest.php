@@ -51,7 +51,7 @@ final class ReservationProcessTest extends TestCase
             $this->roomId,
             $this->reservationPeriod
         );
-        $initialState = new ReservationState($this->processId);
+        $initialState = null;
 
         $expectedState = new ReservationState($this->processId);
         $expectedState->reservationPeriod = $this->reservationPeriod;
