@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared;
+namespace App\Application\Shared;
 
 abstract class IntegerIdentifier
 {
@@ -13,7 +13,7 @@ abstract class IntegerIdentifier
         $this->identifier = $identifier;
     }
 
-    public function id(): int
+    public function toInt(): int
     {
         return $this->identifier;
     }

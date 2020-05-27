@@ -2,27 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Reservation\Event;
+namespace App\Application\Reservation\Command;
 
-use App\Shared\Event;
-use App\Shared\Period;
+use App\Application\Reservation\RoomId;
+use App\Application\Shared\Period;
 
-final class ReservationRequested implements Event
+final class LockRoom
 {
-    private UserId $userId;
     private RoomId $roomId;
     private Period $reservationPeriod;
 
-    public function __construct(UserId $userId, RoomId $roomId, Period $reservationPeriod)
+    public function __construct(RoomId $roomId, Period $reservationPeriod)
     {
-        $this->userId = $userId;
         $this->roomId = $roomId;
         $this->reservationPeriod = $reservationPeriod;
-    }
-
-    public function getUserId(): UserId
-    {
-        return $this->userId;
     }
 
     public function getRoomId(): RoomId
