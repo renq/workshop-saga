@@ -13,7 +13,7 @@ abstract class StringIdentifier
         $this->identifier = $identifier;
     }
 
-    public function id(): string
+    public function toString(): string
     {
         return $this->identifier;
     }

@@ -43,16 +43,19 @@ final class ReservationProcessTest extends TestCase
     public function new_reservation_request_should_generate_lock_room_command(): void
     {
         // Arrange
-        $reservationProcess = new ReservationProcess();
+        $initialState = null;
 
+        // Act
         $incomingEvent = new ReservationRequested(
             $this->processId,
             $this->userId,
             $this->roomId,
             $this->reservationPeriod
         );
-        $initialState = null;
 
+        $result = (new ReservationProcess())->handle($incomingEvent, $initialState);
+
+        // Assert
         $expectedState = new ReservationState($this->processId);
         $expectedState->reservationPeriod = $this->reservationPeriod;
         $expectedState->roomId = $this->roomId;
@@ -60,10 +63,6 @@ final class ReservationProcessTest extends TestCase
 
         $expectedCommand = new LockRoom($this->roomId, $this->reservationPeriod);
 
-        // Act
-        $result = $reservationProcess->handle($incomingEvent, $initialState);
-
-        // Assert
         self::assertEquals(
             $result,
             new ProcessResult(
@@ -77,23 +76,21 @@ final class ReservationProcessTest extends TestCase
     public function after_locking_the_room_we_should_try_to_book_the_room_for_the_user(): void
     {
         // Arrange
-        $reservationProcess = new ReservationProcess();
-
-        $incomingEvent = new RoomLocked($this->processId, $this->roomLockId);
         $initialState = new ReservationState($this->processId);
         $initialState->reservationPeriod = $this->reservationPeriod;
         $initialState->roomId = $this->roomId;
         $initialState->userId = $this->userId;
 
+        // Act
+        $incomingEvent = new RoomLocked($this->processId, $this->roomLockId);
+        $result = (new ReservationProcess())->handle($incomingEvent, $initialState);
+
+        // Assert
         $expectedState = clone $initialState;
         $expectedState->roomLockId = $this->roomLockId;
 
         $expectedCommand = new BookRoom($this->roomLockId, $this->userId);
 
-        // Act
-        $result = $reservationProcess->handle($incomingEvent, $initialState);
-
-        // Assert
         self::assertEquals(
             $result,
             new ProcessResult(
